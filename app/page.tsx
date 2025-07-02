@@ -50,10 +50,45 @@ export default function VSLPage() {
                     el.style.animation = 'fadeIn 0.5s ease-in';
                   });
                   console.log("CTA elements displayed after delay");
+                  
+                  // Adicionar rastreamento de clique no botão após aparecer
+                  setupButtonTracking();
                 }, delaySeconds * 1000);
               } else {
                 // Retry after 1 second if player not found
                 setTimeout(initializeVideoDelay, 1000);
+              }
+            }
+            
+            // Função para configurar rastreamento do botão
+            function setupButtonTracking() {
+              var buyButton = document.querySelector('a[href*="pay.hotmart.com"]');
+              if (buyButton) {
+                buyButton.addEventListener('click', function(e) {
+                  console.log('Buy button clicked - tracking conversion');
+                  
+                  // Rastrear para todos os pixels
+                  if (typeof fbq !== 'undefined') {
+                    fbq('track', 'InitiateCheckout', {
+                      content_name: 'Protocolo Remolacha',
+                      content_category: 'Health Product',
+                      value: 97.00,
+                      currency: 'USD'
+                    });
+                    
+                    fbq('track', 'Purchase', {
+                      content_name: 'Protocolo Remolacha',
+                      content_category: 'Health Product', 
+                      value: 97.00,
+                      currency: 'USD'
+                    });
+                    
+                    console.log('Facebook Pixel events fired: InitiateCheckout and Purchase');
+                  }
+                });
+                console.log('Button tracking setup complete');
+              } else {
+                console.log('Buy button not found for tracking');
               }
             }
             
@@ -106,6 +141,18 @@ export default function VSLPage() {
         }}
       />
 
+      <Script
+        id="meta-pixel-3"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '2520220835010003');
+            fbq('track', 'PageView');
+          `,
+        }}
+      />
+
       <noscript>
         <img
           height="1"
@@ -119,6 +166,13 @@ export default function VSLPage() {
           width="1"
           style={{ display: "none" }}
           src="https://www.facebook.com/tr?id=24289688470655165&ev=PageView&noscript=1"
+          alt=""
+        />
+        <img
+          height="1"
+          width="1"
+          style={{ display: "none" }}
+          src="https://www.facebook.com/tr?id=2520220835010003&ev=PageView&noscript=1"
           alt=""
         />
       </noscript>
