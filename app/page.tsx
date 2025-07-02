@@ -31,17 +31,17 @@ export default function VSLPage() {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
-            // O botão de compra aparecerá aos 31 minutos (1860 segundos)
-            var delaySeconds = 1860;
+            // O botão de compra aparecerá aos 31:46 minutos (1906 segundos) e ficará visível até o final
+            var delaySeconds = 1906;
             
             function initializeVideoDelay() {
               // Aguardar o player carregar completamente
               var player = document.getElementById('vid-685f7df11360073ec94270cb');
               
               if (player) {
-                console.log("Video player found, setting up delay for CTA");
+                console.log("Video player found, setting up delay for CTA at 31:46 minutes");
                 
-                // Usar setTimeout para mostrar CTA após 31 minutos
+                // Usar setTimeout para mostrar CTA após 31:46 minutos
                 setTimeout(function() {
                   var ctaElements = document.querySelectorAll('.cta-esconder');
                   ctaElements.forEach(function(el) {
@@ -49,7 +49,7 @@ export default function VSLPage() {
                     el.classList.remove('cta-esconder');
                     el.style.animation = 'fadeIn 0.5s ease-in';
                   });
-                  console.log("CTA elements displayed after delay");
+                  console.log("CTA elements displayed at 31:46 minutes and will remain visible");
                   
                   // Adicionar rastreamento de clique no botão após aparecer
                   setupButtonTracking();
@@ -103,6 +103,14 @@ export default function VSLPage() {
                 display: block !important;
                 width: 100% !important;
                 height: 100% !important;
+              }
+              .cta-esconder {
+                display: none !important;
+              }
+              .cta-visible {
+                display: block !important;
+                position: sticky !important;
+                z-index: 1000 !important;
               }
             \`;
             document.head.appendChild(style);
@@ -220,7 +228,7 @@ export default function VSLPage() {
             </div>
           </div>
 
-          {/* CTA Section - Hidden initially, shown after 31 minutes */}
+          {/* CTA Section - Hidden initially, shown at 31:46 and remains visible */}
           <div className="cta-esconder" style={{ display: "none" }}>
             <div className="text-center mb-8 md:mb-12 px-2">
               <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 md:p-8 shadow-2xl max-w-2xl mx-auto">
