@@ -5,7 +5,7 @@ export default function VSLPage() {
     <>
       <Script
         id="vturb-player-script"
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             try {
@@ -33,41 +33,44 @@ export default function VSLPage() {
           __html: `
             // O botão de compra aparecerá aos 31:46 minutos (1906 segundos) e ficará visível até o final
             var delaySeconds = 1906;
+            var maxRetries = 10;
+            var retryCount = 0;
             
             function initializeVideoDelay() {
-              // Aguardar o player carregar completamente
               var player = document.getElementById('vid-685f7df11360073ec94270cb');
               
               if (player) {
-                console.log("Video player found, setting up delay for CTA at 31:46 minutes");
+                console.log("Video player found immediately, setting up CTA delay for 31:46 minutes");
                 
-                // Usar setTimeout para mostrar CTA após 31:46 minutos
+                // Configurar o delay para mostrar CTA
                 setTimeout(function() {
                   var ctaElements = document.querySelectorAll('.cta-esconder');
                   ctaElements.forEach(function(el) {
                     el.style.display = 'block';
                     el.classList.remove('cta-esconder');
+                    el.classList.add('cta-visible');
                     el.style.animation = 'fadeIn 0.5s ease-in';
                   });
-                  console.log("CTA elements displayed at 31:46 minutes and will remain visible");
-                  
-                  // Adicionar rastreamento de clique no botão após aparecer
+                  console.log("CTA displayed at 31:46 and will remain visible");
                   setupButtonTracking();
                 }, delaySeconds * 1000);
+                
+              } else if (retryCount < maxRetries) {
+                // Retry mais rápido (500ms) e com limite
+                retryCount++;
+                console.log("Player not found, retry " + retryCount + "/" + maxRetries);
+                setTimeout(initializeVideoDelay, 500);
               } else {
-                // Retry after 1 second if player not found
-                setTimeout(initializeVideoDelay, 1000);
+                console.error("Video player not found after " + maxRetries + " retries");
               }
             }
             
-            // Função para configurar rastreamento do botão
             function setupButtonTracking() {
               var buyButton = document.querySelector('a[href*="pay.hotmart.com"]');
               if (buyButton) {
                 buyButton.addEventListener('click', function(e) {
                   console.log('Buy button clicked - tracking conversion');
                   
-                  // Rastrear para todos os pixels
                   if (typeof fbq !== 'undefined') {
                     fbq('track', 'InitiateCheckout', {
                       content_name: 'Protocolo Remolacha',
@@ -83,20 +86,18 @@ export default function VSLPage() {
                       currency: 'USD'
                     });
                     
-                    console.log('Facebook Pixel events fired: InitiateCheckout and Purchase');
+                    console.log('Facebook Pixel events fired');
                   }
                 });
                 console.log('Button tracking setup complete');
-              } else {
-                console.log('Buy button not found for tracking');
               }
             }
             
-            // Add CSS for fade in animation
+            // CSS otimizado
             var style = document.createElement('style');
             style.textContent = \`
               @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
+                from { opacity: 0; transform: translateY(10px); }
                 to { opacity: 1; transform: translateY(0); }
               }
               vturb-smartplayer {
@@ -109,13 +110,13 @@ export default function VSLPage() {
               }
               .cta-visible {
                 display: block !important;
-                position: sticky !important;
-                z-index: 1000 !important;
+                position: relative !important;
+                z-index: 100 !important;
               }
             \`;
             document.head.appendChild(style);
             
-            // Initialize when DOM is ready
+            // Inicializar imediatamente se DOM estiver pronto
             if (document.readyState === 'loading') {
               document.addEventListener('DOMContentLoaded', initializeVideoDelay);
             } else {
@@ -127,7 +128,7 @@ export default function VSLPage() {
 
       <Script
         id="meta-pixel-1"
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
@@ -139,7 +140,7 @@ export default function VSLPage() {
 
       <Script
         id="meta-pixel-2"
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
@@ -151,7 +152,7 @@ export default function VSLPage() {
 
       <Script
         id="meta-pixel-3"
-        strategy="afterInteractive"
+        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
